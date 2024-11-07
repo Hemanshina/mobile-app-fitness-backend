@@ -8,7 +8,7 @@ const Session = require("../models/Session");
 const UserPaymentAccount = require("../models/UserPaymentAccount");
 
 const userMap = {
-  student: Client,
+  client: Client,
   tutor: Tutor,
 };
 
@@ -185,9 +185,8 @@ const editProfile = async (req, res) => {
     courseName
   } = req.body;
 
-  console.log("called")
 
-  if (!userId || !userType || !email || !userMap[userType] || !name)
+  if (!userId || !userType || !email || !name)
     return res.status(400).json({ message: "All fields are required" });
 
   if (

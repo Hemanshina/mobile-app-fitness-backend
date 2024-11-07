@@ -1,5 +1,6 @@
 const Tutor = require("../models/Tutor");
 const Client = require("../models/Client");
+const ClientSubscription = require("../models/ClientSubscription");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
@@ -59,6 +60,15 @@ const login = async (req, res) => {
     foundUser.refreshToken = refreshToken;
     await foundUser.save();
 
+    const currentDate = new Date();
+
+    const activeSubscription = await ClientSubscription.find({
+      clientId: mongoose.Types.ObjectId(foundUser._id),
+      expiryDate: { $gt: currentDate },
+    })
+      .populate("subscriptionId")
+      .exec();
+
     // Create secure cookie with refresh token
     res.cookie("jwt", refreshToken, {
       httpOnly: true, //accessible only by web server
@@ -81,6 +91,8 @@ const login = async (req, res) => {
       name,
       createdAt,
       imgUrl,
+      subscription: activeSubscription,
+
     });
   } catch (error) {
     console.log(error);
@@ -134,6 +146,15 @@ const refresh = async (req, res) => {
             { expiresIn: "15m" }
           );
 
+          const currentDate = new Date();
+
+          const activeSubscription = await ClientSubscription.find({
+            clientId: mongoose.Types.ObjectId(foundUser._id),
+            expiryDate: { $gt: currentDate },
+          })
+            .populate("subscriptionId")
+            .exec();
+
           const roles = foundUser.roles;
           const email = foundUser.email;
           const user_Id = foundUser._id;
@@ -149,6 +170,8 @@ const refresh = async (req, res) => {
             imgUrl,
             createdAt,
             name,
+            subscription: activeSubscription,
+
           });
         } else return res.status(401).json({ message: "Unauthorized" });
       }
