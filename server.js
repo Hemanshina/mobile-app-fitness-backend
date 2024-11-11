@@ -44,7 +44,8 @@ app.use("/stripe", require("./routes/stripeRoutes"));
 app.use("/payments", require("./routes/clientPaymentsRoutes"));
 app.use("/subscriptions", require("./routes/subscriptionRoutes"));
 app.use("/client-subscriptions", require("./routes/clientSubscrptionRoutes"));
-
+app.use("/meal-plan", require("./routes/mealPlanRoutes"));
+app.use("/progress-log", require("./routes/progressLogRoutes"));
 
 app.all("*", (req, res) => {
   res.status(404);

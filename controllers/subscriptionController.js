@@ -23,7 +23,7 @@ const createSubscription = async (req, res) => {
     !serviceName ||
     !noOfMonths
   )
-    return res.status(400).json({ message: "All fields are required!" });
+    return res.status(400).json({ message: "All fields are required!!" });
 
   try {
     const dupSub = await Subscription.findOne({
